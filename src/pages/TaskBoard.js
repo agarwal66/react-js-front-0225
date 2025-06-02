@@ -27,15 +27,19 @@ const TaskBoard = () => {
       .then(data => setProfileImage(data.download_url));
   };
 
-  const handleAddOrUpdate = async (task) => {
+ const handleAddOrUpdate = async (task) => {
+  try {
     if (task._id) {
-      await axios.put(process.env.REACT_APP_API_URL + `/tasks/${task._id}`, task);
+      await axios.put(`${process.env.REACT_APP_API_URL}/tasks/${task._id}`, task);
     } else {
-      await axios.post(process.env.REACT_APP_API_URL + '/tasks', task);
+      await axios.post(`${process.env.REACT_APP_API_URL}/tasks`, task);
     }
     setSelectedTask(null);
-    fetchTasks();
-  };
+    fetchTasks(); // ✅ Make sure this is called after add/update
+  } catch (error) {
+    console.error('Error saving task:', error);
+  }
+};
 
   const handleDelete = async (id) => {
     await axios.delete(process.env.REACT_APP_API_URL + `/tasks/${id}`);
